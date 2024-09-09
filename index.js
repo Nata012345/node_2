@@ -10,7 +10,7 @@ const handlers = {
     '/api/articles/read' : readArticlesById,
     '/api/articles/create' : addNewArticle,
     // '/api/articles/update' : sum,
-    // '/api/articles/delete' : sum,
+    '/api/articles/delete' : deleteArticleById,
     // '/api/comments/create' : sum,
     // '/api/comments/delete' : sum,
 };
@@ -58,29 +58,58 @@ function addNewArticle(req, res, body, cb) {
     }
     cb(null, fbData);
 }
-function readArticlesById(req, res, body, cb) {
-    const current_url = new URL('http://localhost' + req.url);
-    const search_params = current_url.searchParams;
-    const id = parseInt(search_params.get('id'), 10);
-    const data = fs.readFileSync(filePath, {encoding: 'utf8', flag: 'r'});
-    const articleArr = JSON.parse(data);
-    const articleID = findId(id, articleArr);
-    const fbData = {
-        data: articleID,
-        statusCode: 200
+function deleteArticleById(req, res, body, cb){
+    const id = findIdValue(req);
+    const article = findId(id, articles);
+    let fbData = null;
+    if (article) {
+        const articleIndex = id - 1;
+        articles.splice(articleIndex, 1);
+        writeFile(articles);
+        fbData = {
+            data: article,
+            statusCode: 200
+        }
+    } else {
+        fbData = {
+            data: {'err': 'article not found'},
+            statusCode: 404
+        }
     }
     cb(null, fbData);
 }
-function findId(id, articles) {
-    for (let item of articles) {
-        if (item.id === id) return item;
-        else null;
+function readArticlesById(req, res, body, cb) {
+    const id = findIdValue(req);
+    let fbData = null;
+    const article = findId(id, articles);
+    if (article) {
+        fbData = {
+            data: article,
+            statusCode: 200
+        }
+    } else {
+        fbData = {
+            data: {'err': 'article not found'},
+            statusCode: 404
+        }
     }
+    cb(null, fbData);
 }
 // -------------------- вспомогательные функции -------------------
+function findArticleById(){i
+}
+function findIdValue(req) {
+    const current_url = new URL('http://localhost' + req.url);
+    const search_params = current_url.searchParams;
+    const idValue = parseInt(search_params.get('id'), 10);
+    return idValue;
+}
 function writeArticleToFile(article) {
     articles.push(article);
     writeFile(articles);
+}
+function findId(id, articles) {
+    return articles.find(item => item.id === id);
 }
 // -------------------- функции чтения записи -------------------
 function writeFile(data){
