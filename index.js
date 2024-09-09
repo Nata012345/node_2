@@ -5,7 +5,8 @@ const hostname = '127.0.0.1';
 const port = 3000;
 const filePath = './api/articles.json';
 const articles = [];
-const logPath = path.json(__dirname, 'log.txt');
+const logPath = path.join(__dirname, 'log.txt');
+console.log(logPath);
 
 const handlers = {
     '/api/articles/readall' : readArticles,
@@ -26,12 +27,10 @@ const server = http.createServer((req, res) => {
                 res.end( JSON.stringify(err) );
                 return;
             }
+            createLog(req, res, body);
             res.statusCode = result.statusCode;
             res.setHeader('Content-Type', 'application/json');
             res.end( JSON.stringify(result.data) );
-
-            // записываем в файл log время + eventType + statusCode
-            createLog(req, res, body);
         });
     });
 });
@@ -41,8 +40,9 @@ server.listen(port, hostname, () => {
 // -------------------- handlers функции -------------------
 function readArticles(req, res, body, cb){
     const data = fs.readFileSync(filePath, {encoding: 'utf8', flag: 'r'});
+    const dataRez = JSON.parse(data);
     const fbData = {
-        data: data,
+        data: dataRez,
         statusCode: 200,
         eventType: req.url
     }
@@ -148,15 +148,16 @@ function writeFile(data){
 }
 // -------------------- функции сервера -------------------
 function createLog(req, res, body) {
-    const c = newDate().toString();
+    const time = new Date().toString();
     const logRaw =
         `
         ${time}
         ${req.url}
         ${req.method}
-        ${body ? body : 'no body'}
-      ------------------------------\n`;
-    fs.appendFile(logPath, logRaw, 'utf8', (err)=>{});
+        ${body ? JSON.stringify(body) : 'no body'}
+      ------------------------------`;
+    console.log(logRaw);
+    fs.writeFileSync(logPath, logRaw, {encoding: 'utf-8', flag: 'a'});
 }
 function getHandler(url) {
     let urlSplit = url.split('?')[0];
