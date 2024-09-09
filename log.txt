@@ -1,5 +1,5 @@
 
-        Mon Sep 09 2024 16:46:50 GMT+0400 (Georgia Standard Time)
+        coMon Sep 09 2024 16:46:50 GMT+0400 (Georgia Standard Time)
         /api/articles/create
         POST
         [object Object]
@@ -241,4 +241,9 @@
         /api/articles/read?id=1
         GET
         no body
+      ------------------------------
+        Mon Sep 09 2024 18:31:15 GMT+0400 (Georgia Standard Time)
+        /api/articles/create
+        POST
+        {"title":"title","text":"string","data":"int","author":"string","comments":[]}
       ------------------------------
