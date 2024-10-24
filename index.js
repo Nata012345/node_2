@@ -6,16 +6,13 @@ const port = 3000;
 const filePath = './api/articles.json';
 const articles = [];
 const logPath = path.join(__dirname, 'log.txt');
-console.log(logPath);
 
 const handlers = {
     '/api/articles/readall' : readArticles,
     '/api/articles/read' : readArticlesById,
     '/api/articles/create' : addNewArticle,
     '/api/articles/update' : updateArticleById,
-    '/api/articles/delete' : deleteArticleById,
-    // '/api/comments/create' : sum,
-    // '/api/comments/delete' : sum,
+    '/api/articles/delete' : deleteArticleById
 };
 const server = http.createServer((req, res) => {
     parseBodyJson(req, (err, body) => {
@@ -37,7 +34,7 @@ const server = http.createServer((req, res) => {
 server.listen(port, hostname, () => {
     console.log(`Server running at http://${hostname}:${port}/`);
 });
-// -------------------- handlers функции -------------------
+// -------------------- handlers functions -------------------
 function readArticles(req, res, body, cb){
     const data = fs.readFileSync(filePath, {encoding: 'utf8', flag: 'r'});
     const dataRez = JSON.parse(data);
@@ -123,7 +120,7 @@ function readArticlesById(req, res, body, cb) {
     }
     cb(null, fbData);
 }
-// -------------------- вспомогательные функции -------------------
+// -------------------- additional function -------------------
 function findIdValue(req) {
     const current_url = new URL('http://localhost' + req.url);
     const search_params = current_url.searchParams;
@@ -142,11 +139,11 @@ function rewriteID() {
         articles[i].id = i;
     }
 }
-// -------------------- функции чтения записи -------------------
+// -------------------- write function -------------------
 function writeFile(data){
     fs.writeFile(filePath, JSON.stringify(data), {encoding : 'utf8', flag: 'w'}, (err) => {});
 }
-// -------------------- функции сервера -------------------
+// -------------------- server function -------------------
 function createLog(req, res, body) {
     const time = new Date().toString();
     const logRaw =
